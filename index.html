@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Secure ChatApp</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdn.ably.com/lib/ably.min-1.js"></script>
+</head>
+<body>
+    <div id="login-screen" class="screen">
+        <div class="login-box">
+            <h1>ChatApp Pro</h1>
+            <input type="text" id="username-input" placeholder="Enter Your Name...">
+            <button onclick="startApp()">Start</button>
+        </div>
+    </div>
+
+    <div id="dashboard-screen" class="screen" style="display: none;">
+        <header class="chat-header">
+            <h2>Find Users</h2>
+            <span id="my-name-tag"></span>
+        </header>
+        <div class="search-area">
+            <input type="text" id="target-user-input" placeholder="Enter Friend's Name...">
+            <button onclick="sendChatRequest()">Send Request</button>
+        </div>
+        <div id="request-status" class="status-msg"></div>
+    </div>
+
+    <div id="chat-screen" class="screen" style="display: none;">
+        <header class="chat-header">
+            <button onclick="goBack()" class="back-btn">←</button>
+            <h2 id="chat-with-name">Chat</h2>
+            <button onclick="startVoiceCall()" class="call-btn">📞 Call</button>
+        </header>
+        <div id="chat-box" class="chat-box"></div>
+        <div class="chat-input-area">
+            <label for="image-input" class="icon-btn">📷</label>
+            <input type="file" id="image-input" accept="image/*" hidden>
+            <button id="record-btn" class="icon-btn">🎤</button>
+            <input type="text" id="user-input" placeholder="Type a message...">
+            <button onclick="sendMessage()">Send</button>
+        </div>
+    </div>
+
+    <div id="request-overlay" class="call-overlay" style="display:none;">
+        <div class="call-box">
+            <h3>New Chat Request!</h3>
+            <p id="requesting-user-name"></p>
+            <div class="call-actions">
+                <button class="accept-btn" id="accept-req">Accept</button>
+                <button class="reject-btn" id="reject-req">Reject</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="call-overlay" class="call-overlay" style="display:none;">
+        <div class="call-box">
+            <div class="avatar">👤</div>
+            <h3 id="call-status">Calling...</h3>
+            <button onclick="endCall()" class="end-call">End Call</button>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

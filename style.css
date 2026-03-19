@@ -1,0 +1,18 @@
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Segoe UI', sans-serif; background: #111; height: 100vh; overflow: hidden; display: flex; justify-content: center; }
+.screen { width: 100%; max-width: 450px; height: 100vh; background: #e5ddd5; display: flex; flex-direction: column; position: relative; }
+.login-box { background: white; padding: 40px; border-radius: 20px; text-align: center; margin: auto 20px; }
+.chat-header { background: #075e54; color: white; padding: 15px; display: flex; justify-content: space-between; align-items: center; }
+.search-area { padding: 20px; background: white; display: flex; gap: 10px; }
+.search-area input { flex: 1; padding: 10px; border-radius: 5px; border: 1px solid #ddd; }
+.status-msg { padding: 10px; text-align: center; color: #075e54; font-weight: bold; }
+.chat-box { flex: 1; padding: 15px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; }
+.message { padding: 10px; border-radius: 10px; max-width: 80%; font-size: 14px; }
+.sent { align-self: flex-end; background: #dcf8c6; }
+.received { align-self: flex-start; background: #fff; }
+.chat-input-area { background: #f0f0f0; padding: 10px; display: flex; align-items: center; gap: 10px; }
+.call-overlay { position: fixed; top: 0; width: 100%; max-width: 450px; height: 100%; background: rgba(0,0,0,0.9); z-index: 100; display: flex; align-items: center; justify-content: center; }
+.call-box { background: white; padding: 30px; border-radius: 20px; text-align: center; width: 80%; }
+.call-actions { display: flex; gap: 10px; margin-top: 20px; justify-content: center; }
+.accept-btn { background: #25d366; color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; }
+.reject-btn { background: #ff3b30; color: white; border: none; padding: 10px 20px; border-radius: 10px; cursor: pointer; }
