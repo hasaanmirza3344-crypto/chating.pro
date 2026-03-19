@@ -1,126 +1,78 @@
-// 1. ABLY CONFIGURATION (Working Key)
-const ably = new Ably.Realtime('8O7-Xg.mZ9_9A:pYv6E7x7fE5u9K9u'); 
-const channel = ably.channels.get('secure-chat-v3');
+// Nayi Working API Key
+const ably = new Ably.Realtime('8O7-Xg.T9I5vA:Uj96P_Mv-m7G897n1O7p7L8u8N8m7K8u8L8j8k8'); 
+const channel = ably.channels.get('chat-vfinal-secure');
 
 let myName = "";
-let currentChatPartner = "";
+let currentPartner = "";
 
-// 2. LOGIN FUNCTION
 function startApp() {
     const input = document.getElementById('username-input');
     if (input.value.trim() !== "") {
         myName = input.value.trim();
         document.getElementById('login-screen').style.display = 'none';
         document.getElementById('dashboard-screen').style.display = 'flex';
-        document.getElementById('my-name-tag').textContent = "Logged in as: " + myName;
-    } else {
-        alert("Please enter your name!");
+        document.getElementById('my-name-tag').textContent = "User: " + myName;
     }
 }
 
-// 3. CHAT REQUEST BHEJNA (Step 1)
 function sendChatRequest() {
     const target = document.getElementById('target-user-input').value.trim();
     if (target !== "" && target !== myName) {
-        channel.publish('request', { from: myName, to: target, type: 'chat-req' });
-        document.getElementById('request-status').textContent = "Request sent to " + target + "... Waiting for them to accept.";
-    } else {
-        alert("Enter a valid friend's name!");
+        channel.publish('request', { from: myName, to: target });
+        document.getElementById('request-status').textContent = "Request sent to " + target + "...";
     }
 }
 
-// 4. MAIN LISTENER (Requests aur Messages ko sunna)
 channel.subscribe((msg) => {
     const data = msg.data;
-
-    // Chat Request Receive Hona (Step 2)
-    if (msg.name === 'request' && data.to === myName && data.type === 'chat-req') {
-        showRequestOverlay(data.from);
+    if (msg.name === 'request' && data.to === myName) {
+        showPopup(data.from);
     }
-    
-    // Request ka Answer (Accept/Reject) (Step 3)
-    if (msg.name === 'response' && data.to === myName) {
-        if (data.status === 'accepted') {
-            openChat(data.from);
-        } else {
-            alert(data.from + " rejected your request.");
-            document.getElementById('request-status').textContent = "";
-        }
+    if (msg.name === 'response' && data.to === myName && data.status === 'accepted') {
+        openChat(data.from);
     }
-
-    // Sirf us bande ke messages dikhana jiske sath chat open hai
     if (msg.name === 'chat-msg') {
-        if ((data.sender === currentChatPartner && data.receiver === myName) || 
-            (data.sender === myName && data.receiver === currentChatPartner)) {
-            displayMessage(data, data.sender === myName ? 'sent' : 'received');
+        if ((data.to === myName && data.from === currentPartner) || (data.from === myName && data.to === currentPartner)) {
+            displayMsg(data);
         }
     }
 });
 
-// 5. REQUEST OVERLAY DIKHANA
-function showRequestOverlay(fromName) {
+function showPopup(fromUser) {
     document.getElementById('request-overlay').style.display = 'flex';
-    document.getElementById('requesting-user-name').textContent = fromName + " wants to chat with you!";
-    
+    document.getElementById('requesting-user-name').textContent = fromUser + " wants to chat!";
     document.getElementById('accept-req').onclick = () => {
-        channel.publish('response', { from: myName, to: fromName, status: 'accepted' });
+        channel.publish('response', { from: myName, to: fromUser, status: 'accepted' });
         document.getElementById('request-overlay').style.display = 'none';
-        openChat(fromName);
+        openChat(fromUser);
     };
-    
     document.getElementById('reject-req').onclick = () => {
-        channel.publish('response', { from: myName, to: fromName, status: 'rejected' });
         document.getElementById('request-overlay').style.display = 'none';
     };
 }
 
-// 6. CHAT WINDOW KHOLNA
 function openChat(partner) {
-    currentChatPartner = partner;
+    currentPartner = partner;
     document.getElementById('dashboard-screen').style.display = 'none';
     document.getElementById('chat-screen').style.display = 'flex';
-    document.getElementById('chat-with-name').textContent = "Chatting with: " + partner;
-    document.getElementById('chat-box').innerHTML = ""; // Purani chat clear karein
+    document.getElementById('chat-with-name').textContent = partner;
 }
 
-// 7. MESSAGE BHEJNA
 function sendMessage() {
     const input = document.getElementById('user-input');
     if (input.value.trim() !== "") {
-        channel.publish('chat-msg', { 
-            text: input.value, 
-            sender: myName, 
-            receiver: currentChatPartner,
-            type: 'text' 
-        });
+        channel.publish('chat-msg', { from: myName, to: currentPartner, text: input.value });
         input.value = "";
     }
 }
 
-// 8. MESSAGE DISPLAY KARNA
-function displayMessage(data, type) {
+function displayMsg(data) {
     const chatBox = document.getElementById('chat-box');
-    const msgDiv = document.createElement('div');
-    msgDiv.classList.add('message', type);
-    msgDiv.textContent = data.text;
-    chatBox.appendChild(msgDiv);
+    const div = document.createElement('div');
+    div.className = 'message ' + (data.from === myName ? 'sent' : 'received');
+    div.textContent = data.text;
+    chatBox.appendChild(div);
     chatBox.scrollTop = chatBox.scrollHeight;
 }
 
-// 9. VOICE CALL SYSTEM (Simple Overlay)
-function startVoiceCall() {
-    document.getElementById('call-overlay').style.display = 'flex';
-    document.getElementById('call-status').textContent = "Calling " + currentChatPartner + "...";
-}
-
-function endCall() {
-    document.getElementById('call-overlay').style.display = 'none';
-}
-
-// 10. BACK BUTTON
-function goBack() {
-    document.getElementById('chat-screen').style.display = 'none';
-    document.getElementById('dashboard-screen').style.display = 'flex';
-    currentChatPartner = "";
-    document.getElementById('request-status').textContent = "";
-}
+function goBack() { location.reload(); }
